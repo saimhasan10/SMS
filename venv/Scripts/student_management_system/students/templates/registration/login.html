@@ -1,12 +1,21 @@
 {% extends "base.html" %} {% block content %}
-<div class="container mt-5">
-  <h2>Student Login</h2>
-  <form method="post">
-    {% csrf_token %} {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Login</button>
-  </form>
-  {% if form.errors %}
-  <div class="alert alert-danger mt-3">Invalid username or password.</div>
-  {% endif %}
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div
+    class="card p-4 shadow"
+    style="min-width: 300px; max-width: 400px; width: 100%"
+  >
+    <h2 class="text-center mb-4">Login</h2>
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">Login</button>
+      </div>
+    </form>
+    {% if form.errors %}
+    <div class="alert alert-danger mt-3 mb-0">
+      Invalid username or password.
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}

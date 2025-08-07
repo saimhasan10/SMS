@@ -3,4 +3,4 @@ admin
 admin@gmail.com
 
 riyad
-xxxx6969
+xyzr7777

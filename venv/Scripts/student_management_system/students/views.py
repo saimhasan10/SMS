@@ -3,13 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .models import Student
 from .forms import StudentForm, UserForm
-from django.contrib.auth import login, authenticate
+
+def home(request):
+    return render(request, 'students/home.html')
 
 @login_required
 def student_list(request):
     if not request.user.is_staff:
         return redirect('my_profile')
-    
     students = Student.objects.select_related('user').all()
     return render(request, 'students/student_list.html', {'students': students})
 
@@ -52,6 +53,7 @@ def student_update(request, pk):
     if request.method == 'POST':
         user_form = UserForm(request.POST, instance=user)
         student_form = StudentForm(request.POST, instance=student)
+
         if user_form.is_valid() and student_form.is_valid():
             user = user_form.save(commit=False)
             password = user_form.cleaned_data['password']
@@ -62,8 +64,8 @@ def student_update(request, pk):
             return redirect('student_list')
     else:
         user_form = UserForm(instance=user)
-        user_form.fields['password'].widget.attrs['placeholder'] = "Enter new password or leave blank"
         user_form.fields['password'].required = False
+        user_form.fields['password'].widget.attrs['placeholder'] = "Leave blank to keep current password"
         student_form = StudentForm(instance=student)
 
     context = {
@@ -85,10 +87,12 @@ def student_delete(request, pk):
         student.delete()
         user.delete()
         return redirect('student_list')
-    
     return render(request, 'students/student_confirm_delete.html', {'student': student})
 
 @login_required
 def my_profile(request):
-    student = get_object_or_404(Student, user=request.user)
+    try:
+        student = Student.objects.get(user=request.user)
+    except Student.DoesNotExist:
+        return redirect('home')  # or use 'student_add' if you want them to create a profile
     return render(request, 'students/my_profile.html', {'student': student})
